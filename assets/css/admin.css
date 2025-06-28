@@ -1,0 +1,192 @@
+/**
+ * WordPress Prices - Admin Styles
+ */
+
+/* Margin settings page */
+.wp-prices-margin-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.wp-prices-margin-row input[type="text"],
+.wp-prices-margin-row input[type="number"] {
+    margin-right: 10px;
+}
+
+.wp-prices-margin-row .remove-margin-row {
+    background: #dc3232;
+    border-color: #dc3232;
+    color: #fff;
+}
+
+.wp-prices-margin-row .remove-margin-row:hover {
+    background: #a00;
+    border-color: #a00;
+}
+
+#add-margin-row {
+    margin-top: 10px;
+    background: #0073aa;
+    border-color: #0073aa;
+    color: #fff;
+}
+
+#add-margin-row:hover {
+    background: #005a87;
+    border-color: #005a87;
+}
+
+/* Product edit page */
+.wp-prices-info {
+    background: #e7f3ff;
+    border: 1px solid #b3d9ff;
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.wp-prices-info strong {
+    color: #0073aa;
+}
+
+/* Product list columns */
+.wp-prices-margin-column {
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.wp-prices-category {
+    font-weight: bold;
+    color: #0073aa;
+    margin-bottom: 4px;
+}
+
+.wp-prices-percentage {
+    color: #46b450;
+    margin-bottom: 2px;
+}
+
+.wp-prices-without-margin {
+    color: #666;
+    margin-bottom: 2px;
+}
+
+.wp-prices-margin-amount {
+    color: #dc3232;
+    font-weight: bold;
+}
+
+.wp-prices-no-margin {
+    color: #999;
+    font-style: italic;
+}
+
+/* Quick edit and bulk edit */
+.inline-edit-col .wp-prices-quick-edit {
+    margin-bottom: 10px;
+}
+
+.inline-edit-col .wp-prices-quick-edit label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.inline-edit-col .wp-prices-quick-edit .title {
+    font-weight: bold;
+    display: inline-block;
+    width: 120px;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 782px) {
+    .wp-prices-margin-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .wp-prices-margin-row input {
+        margin-bottom: 10px;
+        margin-right: 0;
+    }
+    
+    .wp-prices-margin-column {
+        font-size: 11px;
+    }
+}
+
+/* Loading states */
+.wp-prices-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.wp-prices-loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #0073aa;
+    border-radius: 50%;
+    animation: wp-prices-spin 1s linear infinite;
+}
+
+@keyframes wp-prices-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Success/Error messages */
+.wp-prices-message {
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+}
+
+.wp-prices-message.success {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.wp-prices-message.error {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+/* Tooltips */
+.wp-prices-tooltip {
+    position: relative;
+    cursor: help;
+}
+
+.wp-prices-tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 1000;
+}
+
+.wp-prices-tooltip:hover::after {
+    opacity: 1;
+}
