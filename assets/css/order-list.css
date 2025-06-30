@@ -1,0 +1,86 @@
+/**
+ * Styles for order list margin column
+ */
+
+/* Order margin column */
+.wp-prices-order-margin {
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.wp-prices-order-margin .wp-prices-margin-amount {
+    font-weight: bold;
+    color: #2271b1;
+    margin-bottom: 2px;
+}
+
+.wp-prices-order-margin .wp-prices-average-percentage {
+    color: #646970;
+    font-size: 11px;
+    margin-bottom: 1px;
+}
+
+.wp-prices-order-margin .wp-prices-products-count {
+    color: #646970;
+    font-size: 11px;
+}
+
+/* No margin state */
+.wp-prices-no-margin {
+    color: #a7aaad;
+    font-style: italic;
+    font-size: 11px;
+}
+
+/* Column width */
+.column-order_margin {
+    width: 120px;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 782px) {
+    .column-order_margin {
+        width: 100px;
+    }
+    
+    .wp-prices-order-margin {
+        font-size: 11px;
+    }
+    
+    .wp-prices-order-margin .wp-prices-average-percentage,
+    .wp-prices-order-margin .wp-prices-products-count {
+        font-size: 10px;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .wp-prices-order-margin .wp-prices-margin-amount {
+        color: #000;
+    }
+    
+    .wp-prices-order-margin .wp-prices-average-percentage,
+    .wp-prices-order-margin .wp-prices-products-count {
+        color: #333;
+    }
+    
+    .wp-prices-no-margin {
+        color: #666;
+    }
+}
+
+/* Dark mode support (if theme supports it) */
+@media (prefers-color-scheme: dark) {
+    .wp-prices-order-margin .wp-prices-margin-amount {
+        color: #72aee6;
+    }
+    
+    .wp-prices-order-margin .wp-prices-average-percentage,
+    .wp-prices-order-margin .wp-prices-products-count {
+        color: #c3c4c7;
+    }
+    
+    .wp-prices-no-margin {
+        color: #8c8f94;
+    }
+}

@@ -50,6 +50,12 @@ $bulk_margins = WP_Prices_Margin_Calculator::calculate_bulk_margins($product_ids
 
 // Pobierz całkowitą marżę zamówienia
 $order_margin = WP_Prices_Margin_Calculator::get_order_total_margin($order_id);
+
+// Pobierz szczegółowe informacje o marży zamówienia
+$order_details = WP_Prices_Margin_Calculator::get_order_margin_details($order_id);
+
+// Pobierz podsumowanie marży zamówienia (dla API/AJAX)
+$order_summary = WP_Prices_Order_List::get_order_margin_summary($order_id);
 ```
 
 ## Przykłady użycia
@@ -83,7 +89,7 @@ update_post_meta($product_id, $meta_key, 'premium');
 ```php
 function get_products_by_margin_category($category) {
     $meta_key = get_option('wp_prices_meta_key', 'margin_category');
-    
+
     $args = array(
         'post_type' => 'product',
         'meta_query' => array(
@@ -94,7 +100,7 @@ function get_products_by_margin_category($category) {
             )
         )
     );
-    
+
     return get_posts($args);
 }
 
@@ -107,19 +113,56 @@ $premium_products = get_products_by_margin_category('premium');
 ```php
 function calculate_cart_total_margin() {
     $total_margin = 0;
-    
+
     foreach (WC()->cart->get_cart() as $cart_item) {
         $product_id = $cart_item['product_id'];
         $quantity = $cart_item['quantity'];
-        
+
         $margin_info = WP_Prices_Margin_Calculator::get_product_margin_info($product_id);
-        
+
         if ($margin_info) {
             $total_margin += $margin_info['margin_amount'] * $quantity;
         }
     }
-    
+
     return $total_margin;
+}
+```
+
+### 5. Wyświetlanie informacji o marży zamówienia
+
+```php
+// Pobierz szczegółowe informacje o marży zamówienia
+$order_id = 123;
+$margin_details = WP_Prices_Margin_Calculator::get_order_margin_details($order_id);
+
+if ($margin_details) {
+    echo '<div class="order-margin-info">';
+    echo '<h3>Informacje o marży zamówienia</h3>';
+    echo '<p>Łączna marża: ' . wc_price($margin_details['total_margin']) . '</p>';
+    echo '<p>Średnia marża: ' . number_format($margin_details['average_margin_percentage'], 1) . '%</p>';
+    echo '<p>Produktów z marżą: ' . $margin_details['products_with_margin'] . ' z ' . $margin_details['total_products'] . '</p>';
+
+    // Szczegóły produktów
+    echo '<h4>Szczegóły produktów:</h4>';
+    foreach ($margin_details['details'] as $detail) {
+        echo '<p>' . $detail['product_name'] . ' (x' . $detail['quantity'] . '): ' . wc_price($detail['total_margin']) . '</p>';
+    }
+    echo '</div>';
+}
+```
+
+### 6. Sprawdzanie czy zamówienie ma produkty z marżą
+
+```php
+function order_has_margin($order_id) {
+    $total_margin = WP_Prices_Margin_Calculator::get_order_total_margin($order_id);
+    return $total_margin > 0;
+}
+
+// Użycie
+if (order_has_margin($order_id)) {
+    echo 'To zamówienie zawiera produkty z marżą';
 }
 ```
 
@@ -131,17 +174,17 @@ add_filter('woocommerce_get_price_html', 'add_margin_info_to_price', 10, 2);
 
 function add_margin_info_to_price($price_html, $product) {
     $margin_info = WP_Prices_Margin_Calculator::get_product_margin_info($product->get_id());
-    
+
     if ($margin_info) {
         $margin_text = sprintf(
             '<small class="margin-info">(Marża: %s%% | Bez marży: %s)</small>',
             $margin_info['margin_percentage'],
             wc_price($margin_info['price_without_margin'])
         );
-        
+
         $price_html .= '<br>' . $margin_text;
     }
-    
+
     return $price_html;
 }
 ```
@@ -151,6 +194,7 @@ function add_margin_info_to_price($price_html, $product) {
 ### Dostępne filtry
 
 #### wp_prices_margin_info
+
 Modyfikuje informacje o marży przed wyświetleniem.
 
 ```php
@@ -159,12 +203,13 @@ add_filter('wp_prices_margin_info', 'custom_margin_info', 10, 2);
 function custom_margin_info($margin_info, $product_id) {
     // Dodaj dodatkowe informacje
     $margin_info['custom_field'] = 'custom_value';
-    
+
     return $margin_info;
 }
 ```
 
 #### wp_prices_display_format
+
 Zmienia format wyświetlania marży.
 
 ```php
@@ -178,12 +223,13 @@ function custom_display_format($formatted_info, $margin_info, $format) {
             wc_price($margin_info['margin_amount'])
         );
     }
-    
+
     return $formatted_info;
 }
 ```
 
 #### wp_prices_calculation_method
+
 Zmienia metodę obliczania marży.
 
 ```php
@@ -198,6 +244,7 @@ function custom_calculation_method($price_without_margin, $price_with_margin, $m
 ### Dostępne akcje
 
 #### wp_prices_margin_updated
+
 Wywoływana po aktualizacji marży produktu.
 
 ```php
@@ -210,6 +257,7 @@ function on_margin_updated($product_id, $old_category, $new_category) {
 ```
 
 #### wp_prices_settings_saved
+
 Wywoływana po zapisaniu ustawień pluginu.
 
 ```php
@@ -229,11 +277,11 @@ Pobiera informacje o marży produktu.
 
 ```javascript
 // JavaScript
-fetch('/wp-json/wp-prices/v1/margin/123')
-    .then(response => response.json())
-    .then(data => {
-        console.log('Margin info:', data);
-    });
+fetch("/wp-json/wp-prices/v1/margin/123")
+  .then((response) => response.json())
+  .then((data) => {
+    console.log("Margin info:", data);
+  });
 ```
 
 ### Endpoint: /wp-json/wp-prices/v1/bulk-margin
@@ -242,19 +290,19 @@ Pobiera informacje o marży dla wielu produktów.
 
 ```javascript
 // JavaScript
-fetch('/wp-json/wp-prices/v1/bulk-margin', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-        product_ids: [123, 456, 789]
-    })
+fetch("/wp-json/wp-prices/v1/bulk-margin", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    product_ids: [123, 456, 789],
+  }),
 })
-.then(response => response.json())
-.then(data => {
-    console.log('Bulk margin info:', data);
-});
+  .then((response) => response.json())
+  .then((data) => {
+    console.log("Bulk margin info:", data);
+  });
 ```
 
 ## Baza danych
@@ -298,7 +346,7 @@ function add_custom_margin_types($types) {
         'percentage' => 50,
         'description' => 'Marża dla klientów VIP'
     );
-    
+
     return $types;
 }
 ```
@@ -313,7 +361,7 @@ function adjust_margin_for_members($margin_percentage, $product_id) {
     if (is_user_logged_in() && user_has_membership()) {
         return $margin_percentage * 0.8; // 20% zniżki dla członków
     }
-    
+
     return $margin_percentage;
 }
 ```
@@ -335,9 +383,9 @@ define('WP_PRICES_DEBUG', true);
 // Funkcja pomocnicza do debugowania
 function debug_margin_calculation($product_id) {
     $margin_info = WP_Prices_Margin_Calculator::get_product_margin_info($product_id);
-    
+
     error_log('Margin debug for product ' . $product_id . ': ' . print_r($margin_info, true));
-    
+
     return $margin_info;
 }
 ```

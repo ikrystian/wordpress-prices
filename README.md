@@ -7,10 +7,12 @@ Plugin WordPress/WooCommerce do zarządzania marżami produktów z możliwości�
 - ✅ Dodawanie meta pól do produktów dla kategoryzacji marży
 - ✅ Ustawianie procentowych marży dla różnych kategorii produktów
 - ✅ Wyświetlanie informacji o marży na liście produktów w panelu administratora
+- ✅ **Wyświetlanie sumarycznej marży na liście zamówień w panelu administratora**
 - ✅ Obliczanie ceny bez marży na podstawie ceny z marżą
 - ✅ Obsługa szybkiej edycji (Quick Edit) i edycji masowej (Bulk Edit)
 - ✅ Panel ustawień w sekcji WooCommerce
 - ✅ Obsługa produktów zmiennych (variations)
+- ✅ Obliczanie średniej marży procentowej dla zamówień
 
 ## Wymagania
 
@@ -23,6 +25,7 @@ Plugin WordPress/WooCommerce do zarządzania marżami produktów z możliwości�
 1. Skopiuj folder `wordpress-prices` do katalogu `/wp-content/plugins/`
 2. Aktywuj plugin w panelu administratora WordPress
 3. Przejdź do **WooCommerce > Marże Produktów** aby skonfigurować ustawienia
+4. Skonfiguruj opcje wyświetlania dla listy produktów i zamówień
 
 ## Konfiguracja
 
@@ -32,7 +35,11 @@ W panelu **WooCommerce > Marże Produktów** możesz:
 
 - **Klucz Meta Pola**: Ustaw nazwę meta pola używanego do identyfikacji kategorii marży (domyślnie: `margin_category`)
 - **Marże dla Kategorii**: Dodaj kategorie marży z odpowiednimi procentami
-- **Opcje Wyświetlania**: Wybierz co ma być wyświetlane na liście produktów
+- **Opcje Wyświetlania na liście produktów**: Wybierz co ma być wyświetlane na liście produktów
+- **Opcje Wyświetlania na liście zamówień**: Konfiguruj wyświetlanie marży na liście zamówień:
+  - Pokaż kolumnę marży zamówień
+  - Pokaż średnią marżę procentową
+  - Pokaż liczbę produktów z marżą
 
 ### 2. Przykładowa konfiguracja marży
 
@@ -54,11 +61,13 @@ Kategoria: basic | Marża: 10%
 ### Obliczanie marży
 
 Plugin oblicza cenę bez marży według wzoru:
+
 ```
 Cena bez marży = Cena z marżą / (1 + marża%)
 ```
 
 **Przykład:**
+
 - Cena produktu: 120 zł
 - Marża: 20%
 - Cena bez marży: 120 / (1 + 0.20) = 100 zł
@@ -72,6 +81,20 @@ Na liście produktów w panelu administratora pojawi się nowa kolumna **Informa
 - Procentową marżę
 - Cenę bez marży
 - Kwotę marży
+
+### Wyświetlanie na liście zamówień
+
+Na liście zamówień w panelu administratora pojawi się nowa kolumna **Marża Zamówienia** zawierająca:
+
+- **Łączną kwotę marży** z wszystkich produktów w zamówieniu
+- **Średnią marżę procentową** (opcjonalnie)
+- **Liczbę produktów z marżą** (opcjonalnie)
+
+Kolumna automatycznie sumuje marże ze wszystkich produktów w zamówieniu, uwzględniając:
+
+- Ilości produktów
+- Produkty zmienne (variations)
+- Różne kategorie marży w jednym zamówieniu
 
 ## Funkcje zaawansowane
 
@@ -152,6 +175,7 @@ GPL v2 or later
 ## Changelog
 
 ### 1.0.0
+
 - Pierwsza wersja pluginu
 - Podstawowe funkcjonalności zarządzania marżami
 - Panel administratora

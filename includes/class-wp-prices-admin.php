@@ -123,8 +123,13 @@ class WP_Prices_Admin
         $options = get_option('wp_prices_display_options', array(
             'show_margin_percentage' => 1,
             'show_price_without_margin' => 1,
-            'decimal_places' => 2
+            'decimal_places' => 2,
+            'show_order_margin_column' => 1,
+            'show_order_average_percentage' => 1,
+            'show_order_products_count' => 1
         ));
+
+        echo '<h4>' . __('Opcje wyświetlania na liście produktów:', 'wordpress-prices') . '</h4>';
 
         echo '<label><input type="checkbox" name="wp_prices_display_options[show_margin_percentage]" value="1" ' . checked(1, isset($options['show_margin_percentage']) ? $options['show_margin_percentage'] : 0, false) . ' /> ';
         echo __('Pokaż procentową marżę', 'wordpress-prices') . '</label><br>';
@@ -133,7 +138,18 @@ class WP_Prices_Admin
         echo __('Pokaż cenę bez marży', 'wordpress-prices') . '</label><br>';
 
         echo '<label>' . __('Miejsca dziesiętne:', 'wordpress-prices') . ' ';
-        echo '<input type="number" name="wp_prices_display_options[decimal_places]" value="' . esc_attr(isset($options['decimal_places']) ? $options['decimal_places'] : 2) . '" min="0" max="4" class="small-text" /></label>';
+        echo '<input type="number" name="wp_prices_display_options[decimal_places]" value="' . esc_attr(isset($options['decimal_places']) ? $options['decimal_places'] : 2) . '" min="0" max="4" class="small-text" /></label><br><br>';
+
+        echo '<h4>' . __('Opcje wyświetlania na liście zamówień:', 'wordpress-prices') . '</h4>';
+
+        echo '<label><input type="checkbox" name="wp_prices_display_options[show_order_margin_column]" value="1" ' . checked(1, isset($options['show_order_margin_column']) ? $options['show_order_margin_column'] : 0, false) . ' /> ';
+        echo __('Pokaż kolumnę marży zamówień', 'wordpress-prices') . '</label><br>';
+
+        echo '<label><input type="checkbox" name="wp_prices_display_options[show_order_average_percentage]" value="1" ' . checked(1, isset($options['show_order_average_percentage']) ? $options['show_order_average_percentage'] : 0, false) . ' /> ';
+        echo __('Pokaż średnią marżę procentową', 'wordpress-prices') . '</label><br>';
+
+        echo '<label><input type="checkbox" name="wp_prices_display_options[show_order_products_count]" value="1" ' . checked(1, isset($options['show_order_products_count']) ? $options['show_order_products_count'] : 0, false) . ' /> ';
+        echo __('Pokaż liczbę produktów z marżą', 'wordpress-prices') . '</label>';
     }
 
     /**
