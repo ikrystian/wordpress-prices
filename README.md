@@ -8,6 +8,7 @@ Plugin WordPress/WooCommerce do zarządzania marżami produktów z możliwości�
 - ✅ Ustawianie procentowych marży dla różnych kategorii produktów
 - ✅ Wyświetlanie informacji o marży na liście produktów w panelu administratora
 - ✅ **Wyświetlanie sumarycznej marży na liście zamówień w panelu administratora**
+- ✅ **Wyświetlanie szczegółowych informacji o marży w szczegółach zamówienia**
 - ✅ Obliczanie ceny bez marży na podstawie ceny z marżą
 - ✅ Obsługa szybkiej edycji (Quick Edit) i edycji masowej (Bulk Edit)
 - ✅ Panel ustawień w sekcji WooCommerce
@@ -96,6 +97,20 @@ Kolumna automatycznie sumuje marże ze wszystkich produktów w zamówieniu, uwzg
 - Produkty zmienne (variations)
 - Różne kategorie marży w jednym zamówieniu
 
+### Wyświetlanie w szczegółach zamówienia
+
+W szczegółach zamówienia w panelu administratora pojawi się nowa sekcja **Informacje o marży zamówienia** zawierająca:
+
+- **Łączną marżę zamówienia** - suma wszystkich marż z produktów
+- **Średnią marżę procentową** - średnia ważona marża dla całego zamówienia
+- **Pokrycie marży** - procent produktów w zamówieniu, które mają ustawioną marżę
+- **Szczegółową tabelę marży produktów** - pokazuje marżę dla każdego produktu osobno
+
+Dodatkowo w tabeli produktów zamówienia można włączyć **kolumnę marży**, która pokazuje:
+
+- Procentową marżę produktu
+- Łączną kwotę marży za dany produkt (uwzględniając ilość)
+
 ## Funkcje zaawansowane
 
 ### Quick Edit (Szybka edycja)
@@ -119,10 +134,14 @@ wordpress-prices/
 │   ├── class-wp-prices-admin.php     # Panel administratora
 │   ├── class-wp-prices-meta-fields.php # Obsługa meta pól
 │   ├── class-wp-prices-margin-calculator.php # Obliczenia marży
-│   └── class-wp-prices-product-list.php # Wyświetlanie na liście
+│   ├── class-wp-prices-product-list.php # Wyświetlanie na liście produktów
+│   ├── class-wp-prices-order-list.php # Wyświetlanie na liście zamówień
+│   └── class-wp-prices-order-details.php # Wyświetlanie w szczegółach zamówienia
 ├── assets/
 │   ├── css/
-│   │   └── admin.css                 # Style CSS
+│   │   ├── admin.css                 # Style panelu admin
+│   │   ├── order-list.css            # Style listy zamówień
+│   │   └── order-details.css         # Style szczegółów zamówienia
 │   └── js/
 │       ├── admin.js                  # JavaScript panelu admin
 │       └── product-list.js           # JavaScript listy produktów

@@ -93,6 +93,7 @@ class WordPress_Prices
         require_once WP_PRICES_PLUGIN_DIR . 'includes/class-wp-prices-margin-calculator.php';
         require_once WP_PRICES_PLUGIN_DIR . 'includes/class-wp-prices-product-list.php';
         require_once WP_PRICES_PLUGIN_DIR . 'includes/class-wp-prices-order-list.php';
+        require_once WP_PRICES_PLUGIN_DIR . 'includes/class-wp-prices-order-details.php';
     }
 
     /**
@@ -105,6 +106,7 @@ class WordPress_Prices
         new WP_Prices_Margin_Calculator();
         new WP_Prices_Product_List();
         new WP_Prices_Order_List();
+        new WP_Prices_Order_Details();
     }
 
     /**

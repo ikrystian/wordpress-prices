@@ -42,45 +42,13 @@
     .column-order_margin {
         width: 100px;
     }
-    
+
     .wp-prices-order-margin {
         font-size: 11px;
     }
-    
+
     .wp-prices-order-margin .wp-prices-average-percentage,
     .wp-prices-order-margin .wp-prices-products-count {
         font-size: 10px;
-    }
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-    .wp-prices-order-margin .wp-prices-margin-amount {
-        color: #000;
-    }
-    
-    .wp-prices-order-margin .wp-prices-average-percentage,
-    .wp-prices-order-margin .wp-prices-products-count {
-        color: #333;
-    }
-    
-    .wp-prices-no-margin {
-        color: #666;
-    }
-}
-
-/* Dark mode support (if theme supports it) */
-@media (prefers-color-scheme: dark) {
-    .wp-prices-order-margin .wp-prices-margin-amount {
-        color: #72aee6;
-    }
-    
-    .wp-prices-order-margin .wp-prices-average-percentage,
-    .wp-prices-order-margin .wp-prices-products-count {
-        color: #c3c4c7;
-    }
-    
-    .wp-prices-no-margin {
-        color: #8c8f94;
     }
 }

@@ -126,7 +126,9 @@ class WP_Prices_Admin
             'decimal_places' => 2,
             'show_order_margin_column' => 1,
             'show_order_average_percentage' => 1,
-            'show_order_products_count' => 1
+            'show_order_products_count' => 1,
+            'show_order_details_margin' => 1,
+            'show_order_item_margin_column' => 1
         ));
 
         echo '<h4>' . __('Opcje wyświetlania na liście produktów:', 'wordpress-prices') . '</h4>';
@@ -149,7 +151,15 @@ class WP_Prices_Admin
         echo __('Pokaż średnią marżę procentową', 'wordpress-prices') . '</label><br>';
 
         echo '<label><input type="checkbox" name="wp_prices_display_options[show_order_products_count]" value="1" ' . checked(1, isset($options['show_order_products_count']) ? $options['show_order_products_count'] : 0, false) . ' /> ';
-        echo __('Pokaż liczbę produktów z marżą', 'wordpress-prices') . '</label>';
+        echo __('Pokaż liczbę produktów z marżą', 'wordpress-prices') . '</label><br><br>';
+
+        echo '<h4>' . __('Opcje wyświetlania w szczegółach zamówienia:', 'wordpress-prices') . '</h4>';
+
+        echo '<label><input type="checkbox" name="wp_prices_display_options[show_order_details_margin]" value="1" ' . checked(1, isset($options['show_order_details_margin']) ? $options['show_order_details_margin'] : 0, false) . ' /> ';
+        echo __('Pokaż sekcję marży w szczegółach zamówienia', 'wordpress-prices') . '</label><br>';
+
+        echo '<label><input type="checkbox" name="wp_prices_display_options[show_order_item_margin_column]" value="1" ' . checked(1, isset($options['show_order_item_margin_column']) ? $options['show_order_item_margin_column'] : 0, false) . ' /> ';
+        echo __('Pokaż kolumnę marży w tabeli produktów zamówienia', 'wordpress-prices') . '</label>';
     }
 
     /**
