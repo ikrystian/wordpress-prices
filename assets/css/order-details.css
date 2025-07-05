@@ -1,0 +1,259 @@
+/**
+ * Styles for order details margin information
+ */
+
+/* Order margin meta box */
+#wp-prices-order-margin {
+    margin-top: 20px;
+}
+
+#wp-prices-order-margin .postbox-header h2 {
+    font-size: 14px;
+    padding: 8px 12px;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Order margin details section */
+.wp-prices-order-details-margin {
+    padding: 0;
+    margin: 0;
+}
+
+.wp-prices-order-details-margin h4 {
+    margin: 15px 0 10px 0;
+    padding: 0;
+    font-size: 14px;
+    color: #1d2327;
+    border-bottom: 1px solid #dcdcde;
+    padding-bottom: 8px;
+}
+
+/* Margin summary */
+.wp-prices-margin-summary {
+    margin-bottom: 20px;
+}
+
+.wp-prices-margin-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.wp-prices-margin-row:last-child {
+    border-bottom: none;
+}
+
+.wp-prices-margin-label {
+    font-weight: 500;
+    color: #50575e;
+    flex: 1;
+}
+
+.wp-prices-margin-value {
+    font-weight: 600;
+    color: #1d2327;
+    text-align: right;
+    min-width: 120px;
+}
+
+.wp-prices-total-margin {
+    color: #2271b1;
+    font-size: 16px;
+}
+
+/* Margin breakdown table */
+.wp-prices-margin-breakdown {
+    margin-top: 20px;
+}
+
+.wp-prices-margin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: #fff;
+    border: 1px solid #dcdcde;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.wp-prices-margin-table th {
+    background: #f6f7f7;
+    padding: 12px 8px;
+    text-align: left;
+    font-weight: 600;
+    color: #1d2327;
+    border-bottom: 1px solid #dcdcde;
+    font-size: 13px;
+}
+
+.wp-prices-margin-table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid #f0f0f1;
+    font-size: 13px;
+    color: #50575e;
+}
+
+.wp-prices-margin-table tr:last-child td {
+    border-bottom: none;
+}
+
+.wp-prices-margin-table tr:hover {
+    background: #f9f9f9;
+}
+
+.wp-prices-product-name {
+    font-weight: 500;
+    color: #1d2327;
+    max-width: 200px;
+}
+
+.wp-prices-quantity {
+    text-align: center;
+    font-weight: 500;
+}
+
+.wp-prices-margin-percentage {
+    text-align: center;
+    font-weight: 600;
+    color: #2271b1;
+}
+
+.wp-prices-price-without-margin,
+.wp-prices-margin-per-item,
+.wp-prices-total-item-margin {
+    text-align: right;
+    font-family: monospace;
+}
+
+.wp-prices-total-item-margin {
+    font-weight: 600;
+    color: #2271b1;
+}
+
+/* Order items table margin column */
+.wp-prices-item-margin-header {
+    width: 100px;
+    text-align: center;
+}
+
+.wp-prices-item-margin-value {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.wp-prices-item-margin-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.wp-prices-item-margin-details .wp-prices-margin-percentage {
+    font-size: 11px;
+    color: #646970;
+    font-weight: 500;
+}
+
+.wp-prices-item-margin-details .wp-prices-margin-amount {
+    font-size: 12px;
+    font-weight: 600;
+    color: #2271b1;
+}
+
+.wp-prices-item-margin-value .wp-prices-no-margin {
+    color: #a7aaad;
+    font-style: italic;
+    font-size: 11px;
+}
+
+/* Responsive design */
+@media screen and (max-width: 1200px) {
+    .wp-prices-margin-table {
+        font-size: 12px;
+    }
+
+    .wp-prices-margin-table th,
+    .wp-prices-margin-table td {
+        padding: 8px 6px;
+    }
+
+    .wp-prices-product-name {
+        max-width: 150px;
+    }
+}
+
+@media screen and (max-width: 782px) {
+    .wp-prices-order-details-margin {
+        padding: 15px;
+        margin: 15px 0;
+    }
+
+    .wp-prices-margin-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .wp-prices-margin-value {
+        text-align: left;
+        min-width: auto;
+    }
+
+    .wp-prices-margin-table {
+        font-size: 11px;
+    }
+
+    .wp-prices-margin-table th,
+    .wp-prices-margin-table td {
+        padding: 6px 4px;
+    }
+
+    .wp-prices-product-name {
+        max-width: 120px;
+    }
+
+    /* Stack table on very small screens */
+    .wp-prices-margin-table,
+    .wp-prices-margin-table thead,
+    .wp-prices-margin-table tbody,
+    .wp-prices-margin-table th,
+    .wp-prices-margin-table td,
+    .wp-prices-margin-table tr {
+        display: block;
+    }
+
+    .wp-prices-margin-table thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .wp-prices-margin-table tr {
+        border: 1px solid #dcdcde;
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 4px;
+    }
+
+    .wp-prices-margin-table td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    .wp-prices-margin-table td:before {
+        content: attr(data-label) ": ";
+        position: absolute;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        font-weight: 600;
+        color: #1d2327;
+    }
+}

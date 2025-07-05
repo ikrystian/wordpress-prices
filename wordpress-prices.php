@@ -94,6 +94,7 @@ class WordPress_Prices
         require_once WP_PRICES_PLUGIN_DIR . 'includes/class-wp-prices-product-list.php';
         require_once WP_PRICES_PLUGIN_DIR . 'includes/class-wp-prices-order-list.php';
         require_once WP_PRICES_PLUGIN_DIR . 'includes/class-wp-prices-linked-products.php';
+        require_once WP_PRICES_PLUGIN_DIR . 'includes/class-wp-prices-order-details.php';
     }
 
     /**
