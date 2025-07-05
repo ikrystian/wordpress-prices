@@ -23,6 +23,8 @@ class WP_Prices_Margin_Calculator
 
     /**
      * Calculate price without margin
+     * Margin is treated as percentage of final price that should be deducted
+     * Example: Price 5900, Margin 49.15% -> Price without margin = 5900 * (1 - 49.15/100) = 3000
      */
     public static function calculate_price_without_margin($price_with_margin, $margin_percentage)
     {
@@ -30,19 +32,23 @@ class WP_Prices_Margin_Calculator
             return $price_with_margin;
         }
 
-        return $price_with_margin / (1 + ($margin_percentage / 100));
+        // Margin is percentage of final price to be deducted
+        return $price_with_margin * (1 - ($margin_percentage / 100));
     }
 
     /**
      * Calculate price with margin
+     * Calculate what the final price should be if we know the base price and margin percentage
+     * Example: Base price 3000, Margin 49.15% -> Final price = 3000 / (1 - 49.15/100) = 5900
      */
     public static function calculate_price_with_margin($price_without_margin, $margin_percentage)
     {
-        if ($margin_percentage <= 0) {
+        if ($margin_percentage <= 0 || $margin_percentage >= 100) {
             return $price_without_margin;
         }
 
-        return $price_without_margin * (1 + ($margin_percentage / 100));
+        // Calculate final price where margin is percentage of that final price
+        return $price_without_margin / (1 - ($margin_percentage / 100));
     }
 
     /**
