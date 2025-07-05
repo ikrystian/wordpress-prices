@@ -33,7 +33,8 @@ class WP_Prices_Linked_Products
         // Add custom tab to WooCommerce product data panel
         add_filter('woocommerce_product_data_tabs', array($this, 'add_linked_products_tab'));
         add_action('woocommerce_product_data_panels', array($this, 'linked_products_panel'));
-        add_action('woocommerce_process_product_meta', array($this, 'save_linked_products_data'));
+        add_action('woocommerce_process_product_meta', array($this, 'save_linked_products_data'), 20, 1);
+        add_action('save_post', array($this, 'save_linked_products_data_fallback'), 25, 1);
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
 
         // Add CSS to hide default linked products tab
@@ -125,7 +126,7 @@ class WP_Prices_Linked_Products
             'order' => 'ASC'
         ));
 
-        echo '<div id="wc-combined-container" style="display: flex; gap: 20px;">';
+        echo '<div id="wc-combined-container" style="display: flex; gap: 20px; gap: 0.5rem;">';
 
         // Cross-sell section
         echo '<div id="wc-crosssell-section" style="flex: 1;">';
@@ -209,6 +210,24 @@ class WP_Prices_Linked_Products
         ?>
         <script type="text/javascript">
             jQuery(document).ready(function($) {
+                // Debug: Check form submission
+                $('#post').on('submit', function() {
+                    console.log('Form being submitted');
+                    var crosssellIds = [];
+                    var upsellIds = [];
+
+                    $('input[name="wc_crosssell_ids[]"]:checked').each(function() {
+                        crosssellIds.push($(this).val());
+                    });
+
+                    $('input[name="wc_upsell_ids[]"]:checked').each(function() {
+                        upsellIds.push($(this).val());
+                    });
+
+                    console.log('Cross-sell IDs:', crosssellIds);
+                    console.log('Up-sell IDs:', upsellIds);
+                    console.log('Nonce:', $('input[name="wc_linked_products_nonce"]').val());
+                });
                 // Cross-sell search functionality
                 $('#wc-crosssell-search').on('keyup', function() {
                     var searchTerm = $(this).val().toLowerCase();
@@ -437,13 +456,13 @@ class WP_Prices_Linked_Products
             return;
         }
 
-        // Verify nonce for security
-        if (!isset($_POST['wc_linked_products_nonce']) || !wp_verify_nonce($_POST['wc_linked_products_nonce'], 'wc_linked_products_nonce_action')) {
+        // Check if this is an autosave
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return;
         }
 
-        // Check if this is an autosave
-        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        // Check if our nonce is set and verify it
+        if (!isset($_POST['wc_linked_products_nonce']) || !wp_verify_nonce($_POST['wc_linked_products_nonce'], 'wc_linked_products_nonce_action')) {
             return;
         }
 
@@ -455,7 +474,6 @@ class WP_Prices_Linked_Products
                 return $id > 0 && $id !== $post_id && get_post_type($id) === 'product';
             });
         }
-        update_post_meta($post_id, '_crosssell_ids', $crosssell_ids);
 
         // Save up-sell products
         $upsell_ids = array();
@@ -465,7 +483,32 @@ class WP_Prices_Linked_Products
                 return $id > 0 && $id !== $post_id && get_post_type($id) === 'product';
             });
         }
+
+        // Update the product meta
+        update_post_meta($post_id, '_crosssell_ids', $crosssell_ids);
         update_post_meta($post_id, '_upsell_ids', $upsell_ids);
+
+        // Also update the WooCommerce product object to ensure consistency
+        $product = wc_get_product($post_id);
+        if ($product) {
+            $product->set_cross_sell_ids($crosssell_ids);
+            $product->set_upsell_ids($upsell_ids);
+            $product->save();
+        }
+    }
+
+    /**
+     * Fallback save function using save_post hook
+     */
+    public function save_linked_products_data_fallback($post_id)
+    {
+        // Only process if this is a product and we have our nonce
+        if (get_post_type($post_id) !== 'product' || !isset($_POST['wc_linked_products_nonce'])) {
+            return;
+        }
+
+        // Call the main save function
+        $this->save_linked_products_data($post_id);
     }
 
     /**
