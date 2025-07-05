@@ -116,7 +116,7 @@ class WP_Prices_Linked_Products
             $upsell_ids = array();
         }
 
-        // Get all published products except current one
+        // Get all published products except current one (single query)
         $products = get_posts(array(
             'post_type' => 'product',
             'post_status' => 'publish',
@@ -126,75 +126,63 @@ class WP_Prices_Linked_Products
             'order' => 'ASC'
         ));
 
-        echo '<div id="wc-combined-container" style="display: flex; gap: 20px; gap: 0.5rem;">';
-
-        // Cross-sell section
-        echo '<div id="wc-crosssell-section" style="flex: 1;">';
-        echo '<h3 style="margin-top: 0; color: #23282d; border-bottom: 1px solid #ddd; padding-bottom: 10px;">' . __('Cross-sell produkty', 'wordpress-prices') . '</h3>';
-        echo '<p style="margin-bottom: 15px; color: #666;">' . __('Produkty wyświetlane w koszyku na podstawie zawartości', 'wordpress-prices') . '</p>';
-
-        // Add search/filter functionality for cross-sell
-        echo '<div style="margin-bottom: 15px;">';
-        echo '<input type="text" id="wc-crosssell-search" placeholder="' . __('Wyszukaj produkty cross-sell...', 'wordpress-prices') . '" style="width: 100%; padding: 8px; margin-bottom: 10px;">';
+        // Header section
+        echo '<div style="margin-bottom: 20px;">';
+        echo '<h3 style="margin-top: 0; color: #23282d; border-bottom: 1px solid #ddd; padding-bottom: 10px;">' . __('Produkty powiązane', 'wordpress-prices') . '</h3>';
+        echo '<p style="margin-bottom: 15px; color: #666;">' . __('Wybierz produkty jako Cross-sell (wyświetlane w koszyku) lub Up-sell (rekomendowane zamiast aktualnego)', 'wordpress-prices') . '</p>';
         echo '</div>';
 
-        echo '<div id="wc-crosssell-list" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: #f9f9f9;">';
+        // Search functionality
+        echo '<div style="margin-bottom: 15px;">';
+        echo '<input type="text" id="wc-linked-products-search" placeholder="' . __('Wyszukaj produkty...', 'wordpress-prices') . '" style="width: 100%; padding: 8px; margin-bottom: 10px;">';
+        echo '</div>';
+
+        // Combined products list with dual checkboxes
+        echo '<div id="wc-linked-products-list" style="max-height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 15px; background: #f9f9f9;">';
 
         if (!empty($products)) {
+            // Table header
+            echo '<div style="display: flex; align-items: center; padding: 10px 5px; border-bottom: 2px solid #ddd; margin-bottom: 10px; font-weight: bold; background: #fff;">';
+            echo '<div style="flex: 1; padding-left: 10px;">' . __('Produkt', 'wordpress-prices') . '</div>';
+            echo '<div style="width: 100px; text-align: center;">' . __('Cross-sell', 'wordpress-prices') . '</div>';
+            echo '<div style="width: 100px; text-align: center;">' . __('Up-sell', 'wordpress-prices') . '</div>';
+            echo '</div>';
+
             foreach ($products as $product) {
-                $checked = in_array($product->ID, $crosssell_ids) ? 'checked="checked"' : '';
+                $crosssell_checked = in_array($product->ID, $crosssell_ids) ? 'checked="checked"' : '';
+                $upsell_checked = in_array($product->ID, $upsell_ids) ? 'checked="checked"' : '';
                 $product_title = $product->post_title;
                 $product_sku = get_post_meta($product->ID, '_sku', true);
                 $display_title = $product_title . ($product_sku ? ' (SKU: ' . $product_sku . ')' : '');
 
-                echo '<div class="wc-crosssell-item" style="margin-bottom: 8px;">';
-                echo '<label style="display: block; float: none; width: 100%; margin: unset; cursor: pointer; padding: 5px; border-radius: 3px;" onmouseover="this.style.backgroundColor=\'#e8f4f8\'" onmouseout="this.style.backgroundColor=\'transparent\'">';
-                echo '<input type="checkbox" name="wc_crosssell_ids[]" value="' . esc_attr($product->ID) . '" ' . $checked . ' style="margin-right: 8px;">';
-                echo '<span class="product-title">' . esc_html($display_title) . '</span>';
+                echo '<div class="wc-linked-product-item" style="display: flex; align-items: center; margin-bottom: 8px; padding: 8px 5px; background: #fff; border-radius: 3px; border: 1px solid #e1e1e1;" onmouseover="this.style.backgroundColor=\'#e8f4f8\'" onmouseout="this.style.backgroundColor=\'#fff\'">';
+
+                // Product name
+                echo '<div style="flex: 1; padding-left: 10px;">';
+                echo '<span class="product-title" style="font-weight: 500;">' . esc_html($display_title) . '</span>';
+                echo '</div>';
+
+                // Cross-sell checkbox
+                echo '<div style="width: 100px; text-align: center;">';
+                echo '<label style="cursor: pointer; display: inline-block; float: none; margin: 0; width: auto;">';
+                echo '<input type="checkbox" name="wc_crosssell_ids[]" value="' . esc_attr($product->ID) . '" ' . $crosssell_checked . ' class="crosssell-checkbox" style="margin: 0;">';
                 echo '</label>';
+                echo '</div>';
+
+                // Up-sell checkbox
+                echo '<div style="width: 100px; text-align: center;">';
+                echo '<label style="cursor: pointer; display: inline-block; float: none; margin: 0; width: auto;">';
+                echo '<input type="checkbox" name="wc_upsell_ids[]" value="' . esc_attr($product->ID) . '" ' . $upsell_checked . ' class="upsell-checkbox" style="margin: 0;">';
+                echo '</label>';
+                echo '</div>';
+
                 echo '</div>';
             }
         } else {
             echo '<p>' . __('Brak dostępnych produktów.', 'wordpress-prices') . '</p>';
         }
 
-        echo '</div>';
-        echo '</div>'; // End cross-sell section
-
-        // Up-sell section
-        echo '<div id="wc-upsell-section" style="flex: 1;">';
-        echo '<h3 style="margin-top: 0; color: #23282d; border-bottom: 1px solid #ddd; padding-bottom: 10px;">' . __('Up-sell produkty', 'wordpress-prices') . '</h3>';
-        echo '<p style="margin-bottom: 15px; color: #666;">' . __('Produkty rekomendowane zamiast aktualnie przeglądanego', 'wordpress-prices') . '</p>';
-
-        // Add search/filter functionality for up-sell
-        echo '<div style="margin-bottom: 15px;">';
-        echo '<input type="text" id="wc-upsell-search" placeholder="' . __('Wyszukaj produkty up-sell...', 'wordpress-prices') . '" style="width: 100%; padding: 8px; margin-bottom: 10px;">';
-        echo '</div>';
-
-        echo '<div id="wc-upsell-list" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: #f9f9f9;">';
-
-        if (!empty($products)) {
-            foreach ($products as $product) {
-                $checked = in_array($product->ID, $upsell_ids) ? 'checked="checked"' : '';
-                $product_title = $product->post_title;
-                $product_sku = get_post_meta($product->ID, '_sku', true);
-                $display_title = $product_title . ($product_sku ? ' (SKU: ' . $product_sku . ')' : '');
-
-                echo '<div class="wc-upsell-item" style="margin-bottom: 8px;">';
-                echo '<label style="display: block; float: none; width: 100%; margin: unset; cursor: pointer; padding: 5px; border-radius: 3px;" onmouseover="this.style.backgroundColor=\'#e8f4f8\'" onmouseout="this.style.backgroundColor=\'transparent\'">';
-                echo '<input type="checkbox" name="wc_upsell_ids[]" value="' . esc_attr($product->ID) . '" ' . $checked . ' style="margin-right: 8px;">';
-                echo '<span class="product-title">' . esc_html($display_title) . '</span>';
-                echo '</label>';
-                echo '</div>';
-            }
-        } else {
-            echo '<p>' . __('Brak dostępnych produktów.', 'wordpress-prices') . '</p>';
-        }
-
-        echo '</div>';
-        echo '</div>'; // End up-sell section
-
-        echo '</div>'; // End combined container
+        echo '</div>'; // End products list
 
         // Add JavaScript and CSS for combined functionality
         $this->render_scripts_and_styles();
@@ -228,10 +216,11 @@ class WP_Prices_Linked_Products
                     console.log('Up-sell IDs:', upsellIds);
                     console.log('Nonce:', $('input[name="wc_linked_products_nonce"]').val());
                 });
-                // Cross-sell search functionality
-                $('#wc-crosssell-search').on('keyup', function() {
+
+                // Search functionality for combined list
+                $('#wc-linked-products-search').on('keyup', function() {
                     var searchTerm = $(this).val().toLowerCase();
-                    $('.wc-crosssell-item').each(function() {
+                    $('.wc-linked-product-item').each(function() {
                         var productTitle = $(this).find('.product-title').text().toLowerCase();
                         if (productTitle.indexOf(searchTerm) > -1) {
                             $(this).show();
@@ -241,46 +230,41 @@ class WP_Prices_Linked_Products
                     });
                 });
 
-                // Up-sell search functionality
-                $('#wc-upsell-search').on('keyup', function() {
-                    var searchTerm = $(this).val().toLowerCase();
-                    $('.wc-upsell-item').each(function() {
-                        var productTitle = $(this).find('.product-title').text().toLowerCase();
-                        if (productTitle.indexOf(searchTerm) > -1) {
-                            $(this).show();
-                        } else {
-                            $(this).hide();
-                        }
-                    });
-                });
-
-                // Cross-sell controls
-                var crosssellControlsHtml = '<div style="margin-bottom: 10px; padding: 10px; background: #fff; border: 1px solid #ddd; border-radius: 3px;">' +
+                // Control buttons HTML
+                var controlsHtml = '<div style="margin-bottom: 15px; padding: 15px; background: #fff; border: 1px solid #ddd; border-radius: 3px;">' +
+                    '<div style="display: flex; gap: 20px; margin-bottom: 15px;">' +
+                    '<div style="flex: 1;">' +
+                    '<h4 style="margin: 0 0 10px 0; color: #23282d;">Cross-sell kontrola:</h4>' +
                     '<button type="button" id="wc-crosssell-select-all" class="button button-small" style="margin-right: 10px;">Zaznacz wszystkie</button>' +
                     '<button type="button" id="wc-crosssell-deselect-all" class="button button-small">Odznacz wszystkie</button>' +
-                    '<div style="margin-top: 10px;"><strong>Wybrane Cross-sell:</strong></div>' +
-                    '<div id="wc-crosssell-selected-list" style="margin-top: 5px; padding: 8px; background: #f0f0f1; border-radius: 3px; min-height: 20px; font-size: 12px; color: #666;">Brak wybranych produktów</div>' +
-                    '</div>';
-
-                $('#wc-crosssell-list').before(crosssellControlsHtml);
-
-                // Up-sell controls
-                var upsellControlsHtml = '<div style="margin-bottom: 10px; padding: 10px; background: #fff; border: 1px solid #ddd; border-radius: 3px;">' +
+                    '</div>' +
+                    '<div style="flex: 1;">' +
+                    '<h4 style="margin: 0 0 10px 0; color: #23282d;">Up-sell kontrola:</h4>' +
                     '<button type="button" id="wc-upsell-select-all" class="button button-small" style="margin-right: 10px;">Zaznacz wszystkie</button>' +
                     '<button type="button" id="wc-upsell-deselect-all" class="button button-small">Odznacz wszystkie</button>' +
-                    '<div style="margin-top: 10px;"><strong>Wybrane Up-sell:</strong></div>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div style="display: flex; gap: 20px;">' +
+                    '<div style="flex: 1;">' +
+                    '<div><strong>Wybrane Cross-sell:</strong></div>' +
+                    '<div id="wc-crosssell-selected-list" style="margin-top: 5px; padding: 8px; background: #f0f0f1; border-radius: 3px; min-height: 20px; font-size: 12px; color: #666;">Brak wybranych produktów</div>' +
+                    '</div>' +
+                    '<div style="flex: 1;">' +
+                    '<div><strong>Wybrane Up-sell:</strong></div>' +
                     '<div id="wc-upsell-selected-list" style="margin-top: 5px; padding: 8px; background: #f0f0f1; border-radius: 3px; min-height: 20px; font-size: 12px; color: #666;">Brak wybranych produktów</div>' +
+                    '</div>' +
+                    '</div>' +
                     '</div>';
 
-                $('#wc-upsell-list').before(upsellControlsHtml);
+                $('#wc-linked-products-list').before(controlsHtml);
 
                 // Update cross-sell selected products list
                 function updateCrosssellSelectedList() {
                     var selectedProducts = [];
                     var selectedData = [];
 
-                    $('#wc-crosssell-list input[type="checkbox"]:checked').each(function() {
-                        var productName = $(this).closest('label').find('.product-title').text();
+                    $('.crosssell-checkbox:checked').each(function() {
+                        var productName = $(this).closest('.wc-linked-product-item').find('.product-title').text();
                         var productId = $(this).val();
                         selectedProducts.push(productName);
                         selectedData.push({
@@ -307,8 +291,8 @@ class WP_Prices_Linked_Products
                     var selectedProducts = [];
                     var selectedData = [];
 
-                    $('#wc-upsell-list input[type="checkbox"]:checked').each(function() {
-                        var productName = $(this).closest('label').find('.product-title').text();
+                    $('.upsell-checkbox:checked').each(function() {
+                        var productName = $(this).closest('.wc-linked-product-item').find('.product-title').text();
                         var productId = $(this).val();
                         selectedProducts.push(productName);
                         selectedData.push({
@@ -336,86 +320,85 @@ class WP_Prices_Linked_Products
 
                 // Cross-sell controls
                 $('#wc-crosssell-select-all').on('click', function() {
-                    $('#wc-crosssell-list input[type="checkbox"]:visible').prop('checked', true);
+                    $('.wc-linked-product-item:visible .crosssell-checkbox').prop('checked', true);
                     updateCrosssellSelectedList();
                 });
 
                 $('#wc-crosssell-deselect-all').on('click', function() {
-                    $('#wc-crosssell-list input[type="checkbox"]:visible').prop('checked', false);
+                    $('.wc-linked-product-item:visible .crosssell-checkbox').prop('checked', false);
                     updateCrosssellSelectedList();
                 });
 
                 // Up-sell controls
                 $('#wc-upsell-select-all').on('click', function() {
-                    $('#wc-upsell-list input[type="checkbox"]:visible').prop('checked', true);
+                    $('.wc-linked-product-item:visible .upsell-checkbox').prop('checked', true);
                     updateUpsellSelectedList();
                 });
 
                 $('#wc-upsell-deselect-all').on('click', function() {
-                    $('#wc-upsell-list input[type="checkbox"]:visible').prop('checked', false);
+                    $('.wc-linked-product-item:visible .upsell-checkbox').prop('checked', false);
                     updateUpsellSelectedList();
                 });
 
                 // Update lists on checkbox changes
-                $('#wc-crosssell-list').on('change', 'input[type="checkbox"]', function() {
+                $(document).on('change', '.crosssell-checkbox', function() {
                     updateCrosssellSelectedList();
                 });
 
-                $('#wc-upsell-list').on('change', 'input[type="checkbox"]', function() {
+                $(document).on('change', '.upsell-checkbox', function() {
                     updateUpsellSelectedList();
                 });
 
                 // Handle clicking on selected product names to uncheck them
                 $(document).on('click', '.selected-crosssell-item', function() {
                     var productId = $(this).data('product-id');
-                    $('#wc-crosssell-list input[type="checkbox"][value="' + productId + '"]').prop('checked', false);
+                    $('.crosssell-checkbox[value="' + productId + '"]').prop('checked', false);
                     updateCrosssellSelectedList();
                 });
 
                 $(document).on('click', '.selected-upsell-item', function() {
                     var productId = $(this).data('product-id');
-                    $('#wc-upsell-list input[type="checkbox"][value="' + productId + '"]').prop('checked', false);
+                    $('.upsell-checkbox[value="' + productId + '"]').prop('checked', false);
                     updateUpsellSelectedList();
                 });
             });
         </script>
 
         <style type="text/css">
-            /* Combined container styles */
-            #wc-combined-container {
-                display: flex;
-                gap: 20px;
+            /* Combined products list styles */
+            #wc-linked-products-list {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
             }
 
-            @media (max-width: 768px) {
-                #wc-combined-container {
-                    flex-direction: column;
-                    gap: 15px;
-                }
+            /* Product item styles */
+            .wc-linked-product-item {
+                transition: background-color 0.2s ease;
             }
 
-            /* Cross-sell and Up-sell section styles */
-            #wc-crosssell-section,
-            #wc-upsell-section {
-                flex: 1;
-                min-width: 0;
+            .wc-linked-product-item:nth-child(even) {
+                background-color: #f8f9fa !important;
             }
 
-            /* Item styles */
-            .wc-crosssell-item:nth-child(even),
-            .wc-upsell-item:nth-child(even) {
-                background-color: #f5f5f5;
+            .wc-linked-product-item:hover {
+                background-color: #e8f4f8 !important;
+                border-color: #0073aa !important;
             }
 
-            .wc-crosssell-item input[type="checkbox"],
-            .wc-upsell-item input[type="checkbox"] {
-                transform: scale(1.2);
-                padding: 0.5rem;
+            /* Checkbox styles */
+            .crosssell-checkbox,
+            .upsell-checkbox {
+                transform: scale(1.3);
+                cursor: pointer;
             }
 
             /* Search field styles */
-            #wc-crosssell-search:focus,
-            #wc-upsell-search:focus {
+            #wc-linked-products-search {
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+
+            #wc-linked-products-search:focus {
                 border-color: #0073aa;
                 box-shadow: 0 0 0 1px #0073aa;
                 outline: none;
@@ -429,13 +412,26 @@ class WP_Prices_Linked_Products
                 padding: 2px 4px;
             }
 
-            /* Section headers */
-            #wc-crosssell-section h3,
-            #wc-upsell-section h3 {
-                margin-top: 0;
-                color: #23282d;
-                border-bottom: 1px solid #ddd;
-                padding-bottom: 10px;
+            /* Control buttons styles */
+            .button.button-small {
+                font-size: 12px;
+                padding: 4px 8px;
+                height: auto;
+                line-height: 1.4;
+            }
+
+            /* Responsive design */
+            @media (max-width: 768px) {
+                .wc-linked-product-item {
+                    flex-direction: column;
+                    align-items: flex-start !important;
+                }
+
+                .wc-linked-product-item>div {
+                    width: 100% !important;
+                    text-align: left !important;
+                    margin-bottom: 5px;
+                }
             }
         </style>
         <?php
